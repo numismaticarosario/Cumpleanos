@@ -93,6 +93,8 @@ body { font-family:'Outfit',sans-serif; min-height:100vh; color:var(--text); pos
 .dropzone input[type=file] { position:absolute; inset:0; opacity:0; cursor:pointer; width:100%; }
 .dropzone:hover { border-color:rgba(96,165,250,.5); background:rgba(96,165,250,.06); }
 .dropzone.filled { border-style:solid; border-color:rgba(52,211,153,.4); background:rgba(52,211,153,.05); }
+.dropzone.drag-over { border-color:rgba(96,165,250,.9); background:rgba(96,165,250,.12); transform:scale(1.02); }
+.step2-dropzone.drag-over { border-color:rgba(167,139,250,.9); background:rgba(167,139,250,.12); transform:scale(1.01); }
 .dz-icon { font-size:1.1rem; margin-bottom:3px; pointer-events:none; }
 .dz-label { font-size:.65rem; font-weight:600; color:var(--muted); text-transform:uppercase; letter-spacing:.09em; margin-bottom:2px; pointer-events:none; }
 .dz-sub { font-size:.65rem; color:rgba(200,215,255,.3); pointer-events:none; }
@@ -300,42 +302,85 @@ const state = {
   alertas: [],
 };
 
+// ── DRAG & DROP HELPER ──
+function activarDragDrop(dzEl, onFileDrop) {
+  dzEl.addEventListener('dragover', e => {
+    e.preventDefault();
+    dzEl.classList.add('drag-over');
+  });
+  dzEl.addEventListener('dragleave', e => {
+    if (!dzEl.contains(e.relatedTarget)) dzEl.classList.remove('drag-over');
+  });
+  dzEl.addEventListener('drop', e => {
+    e.preventDefault();
+    dzEl.classList.remove('drag-over');
+    const file = e.dataTransfer.files[0];
+    if (file) onFileDrop(file);
+  });
+}
+
 // ── INIT ──
 function init() {
   const grid = document.getElementById('empresasGrid');
   const checklist = document.getElementById('checklist');
+
   EMPRESAS.forEach(emp => {
-    grid.innerHTML += `
-      <div class="empresa-card" id="card-${emp.id}">
-        <div>
-          <div class="empresa-name">${emp.nombre}</div>
-          <span class="empresa-badge" id="badge-${emp.id}" style="display:none">✓ Lista</span>
-        </div>
-        <div class="dropzone" id="dz-${emp.id}-arca" onclick="triggerFile('file-${emp.id}-arca')">
-          <input type="file" id="file-${emp.id}-arca" accept=".txt,.xls,.xlsx"
-            style="display:none" onchange="handleNomina(event,'${emp.id}','arca')" />
-          <div class="dz-icon">📄</div>
-          <div class="dz-label">ARCA</div>
-          <div class="dz-sub" id="sub-${emp.id}-arca">Arrastrá o hacé clic</div>
-        </div>
-        <div class="dropzone" id="dz-${emp.id}-tango" onclick="triggerFile('file-${emp.id}-tango')">
-          <input type="file" id="file-${emp.id}-tango" accept=".xlsx,.xls"
-            style="display:none" onchange="handleNomina(event,'${emp.id}','tango')" />
-          <div class="dz-icon">📊</div>
-          <div class="dz-label">TANGO</div>
-          <div class="dz-sub" id="sub-${emp.id}-tango">Arrastrá o hacé clic</div>
-        </div>
-      </div>`;
-    checklist.innerHTML += `
-      <div class="check-item pending" id="check-${emp.id}">
-        <span class="cdot"></span>${emp.nombre}
-      </div>`;
+    const card = document.createElement('div');
+    card.className = 'empresa-card';
+    card.id = 'card-' + emp.id;
+    card.innerHTML =
+      '<div>' +
+        '<div class="empresa-name">' + emp.nombre + '</div>' +
+        '<span class="empresa-badge" id="badge-' + emp.id + '" style="display:none">\u2713 Lista</span>' +
+      '</div>' +
+      '<div class="dropzone" id="dz-' + emp.id + '-arca">' +
+        '<input type="file" id="file-' + emp.id + '-arca" accept=".txt,.xls,.xlsx" style="display:none" />' +
+        '<div class="dz-icon">\uD83D\uDCC4</div>' +
+        '<div class="dz-label">ARCA</div>' +
+        '<div class="dz-sub" id="sub-' + emp.id + '-arca">Arrast\u00E1 o hac\u00E9 clic</div>' +
+      '</div>' +
+      '<div class="dropzone" id="dz-' + emp.id + '-tango">' +
+        '<input type="file" id="file-' + emp.id + '-tango" accept=".xlsx,.xls" style="display:none" />' +
+        '<div class="dz-icon">\uD83D\uDCCA</div>' +
+        '<div class="dz-label">TANGO</div>' +
+        '<div class="dz-sub" id="sub-' + emp.id + '-tango">Arrast\u00E1 o hac\u00E9 clic</div>' +
+      '</div>';
+    grid.appendChild(card);
+
+    // Clic para abrir selector
+    document.getElementById('dz-' + emp.id + '-arca').addEventListener('click', () => {
+      document.getElementById('file-' + emp.id + '-arca').click();
+    });
+    document.getElementById('file-' + emp.id + '-arca').addEventListener('change', function(e) {
+      if (e.target.files[0]) procesarArchivoNomina(e.target.files[0], emp.id, 'arca');
+    });
+
+    document.getElementById('dz-' + emp.id + '-tango').addEventListener('click', () => {
+      document.getElementById('file-' + emp.id + '-tango').click();
+    });
+    document.getElementById('file-' + emp.id + '-tango').addEventListener('change', function(e) {
+      if (e.target.files[0]) procesarArchivoNomina(e.target.files[0], emp.id, 'tango');
+    });
+
+    // Drag & drop
+    activarDragDrop(document.getElementById('dz-' + emp.id + '-arca'), file => {
+      procesarArchivoNomina(file, emp.id, 'arca');
+    });
+    activarDragDrop(document.getElementById('dz-' + emp.id + '-tango'), file => {
+      procesarArchivoNomina(file, emp.id, 'tango');
+    });
+
+    checklist.innerHTML += '<div class="check-item pending" id="check-' + emp.id + '"><span class="cdot"></span>' + emp.nombre + '</div>';
   });
-  checklist.innerHTML += `
-    <div class="check-item pending" id="check-template">
-      <span class="cdot"></span>Template de imagen
-    </div>`;
+
+  checklist.innerHTML += '<div class="check-item pending" id="check-template"><span class="cdot"></span>Template de imagen</div>';
+
+  // Drag & drop template
+  activarDragDrop(document.getElementById('templateDZ'), file => {
+    procesarArchivoTemplate(file);
+  });
 }
+
 
 // ── HELPERS ──
 function triggerFile(id) { document.getElementById(id).click(); }
@@ -387,51 +432,59 @@ function parsearTango(wb) {
   return empleados;
 }
 
-// ── HANDLERS ──
-function handleNomina(event, empId, tipo) {
-  const file = event.target.files[0];
-  if (!file) return;
+
+// ── HANDLERS (aceptan File directamente, compatibles con clic y drag&drop) ──
+function procesarArchivoNomina(file, empId, tipo) {
   const reader = new FileReader();
-  if (tipo==='arca') {
+  if (tipo === 'arca') {
     reader.onload = e => {
       const cuils = parsearArca(e.target.result);
-      if (!cuils.size) { showToast('No se encontraron CUILs en ARCA','error'); return; }
+      if (!cuils.size) { showToast('No se encontraron CUILs en ARCA', 'error'); return; }
       state.archivos[empId].arca = cuils;
-      markDZ(`dz-${empId}-arca`,`sub-${empId}-arca`,file.name);
+      markDZ('dz-' + empId + '-arca', 'sub-' + empId + '-arca', file.name);
       actualizarEstado();
-      showToast(`✓ ARCA: ${cuils.size} CUILs activos`,'success');
+      showToast('\u2713 ARCA: ' + cuils.size + ' CUILs activos', 'success');
     };
-    reader.readAsText(file,'utf-8');
+    reader.readAsText(file, 'utf-8');
   } else {
     reader.onload = e => {
-      const wb = XLSX.read(e.target.result,{type:'array'});
+      const wb = XLSX.read(e.target.result, { type: 'array' });
       const emp = parsearTango(wb);
-      if (!emp.length) { showToast('No se pudieron leer datos de TANGO','error'); return; }
+      if (!emp.length) { showToast('No se pudieron leer datos de TANGO', 'error'); return; }
       state.archivos[empId].tango = emp;
-      markDZ(`dz-${empId}-tango`,`sub-${empId}-tango`,file.name);
+      markDZ('dz-' + empId + '-tango', 'sub-' + empId + '-tango', file.name);
       actualizarEstado();
-      showToast(`✓ TANGO: ${emp.length} empleados`,'success');
+      showToast('\u2713 TANGO: ' + emp.length + ' empleados', 'success');
     };
     reader.readAsArrayBuffer(file);
   }
 }
 
-function handleTemplate(event) {
-  const file = event.target.files[0];
-  if (!file) return;
+function procesarArchivoTemplate(file) {
   const reader = new FileReader();
   reader.onload = e => {
     state.template = e.target.result;
     document.getElementById('templateDZ').classList.add('filled');
-    document.getElementById('templateIcon').textContent = '✅';
+    document.getElementById('templateIcon').textContent = '\u2705';
     document.getElementById('templateLabel').textContent = file.name;
     document.getElementById('templateSub').textContent = 'Template cargado';
-    setCheckItem('check-template',true);
+    setCheckItem('check-template', true);
     actualizarEstado();
-    showToast('✓ Template cargado','success');
+    showToast('\u2713 Template cargado', 'success');
   };
   reader.readAsDataURL(file);
 }
+
+// Mantener compatibilidad con onchange del input (por si acaso)
+function handleNomina(event, empId, tipo) {
+  const file = event.target.files[0];
+  if (file) procesarArchivoNomina(file, empId, tipo);
+}
+function handleTemplate(event) {
+  const file = event.target.files[0];
+  if (file) procesarArchivoTemplate(file);
+}
+
 
 function markDZ(dzId, subId, filename) {
   document.getElementById(dzId).classList.add('filled');
@@ -586,8 +639,8 @@ function generarExcel() {
 
 // ── GENERAR IMAGEN ──
 function generarImagen() {
-  if (!state.template)             { showToast('No hay template cargado','error'); return; }
-  if (!state.cumpleaneros.length)  { showToast('No hay cumpleañeros para mostrar','error'); return; }
+  if (!state.template)            { showToast('No hay template cargado','error'); return; }
+  if (!state.cumpleaneros.length) { showToast('No hay cumpleañeros para mostrar','error'); return; }
 
   const img = new Image();
   img.onload = () => {
@@ -603,107 +656,96 @@ function generarImagen() {
     const mesNombre = getMonthName();
     const personas  = state.cumpleaneros;
 
-    // ── Zona de nombres: entre 12% y 42% del alto de la imagen
-    const ZONA_TOP    = H * 0.12;
-    const ZONA_BOTTOM = H * 0.42;
-    const ZONA_H      = ZONA_BOTTOM - ZONA_TOP;
-
-    // ── Título "Cumpleañeros MES" en el centro horizontal, arriba de la zona
-    const TITULO_Y = H * 0.065;
-
-    // Calcular font-size del título escalado al ancho
+    // ── TÍTULO ──
+    const TITULO_Y   = H * 0.065;
     const tituloSize = Math.round(W * 0.058);
-    ctx.font        = `800 ${tituloSize}px Arial, sans-serif`;
-    ctx.fillStyle   = '#ffffff';
-    ctx.textAlign   = 'center';
+    ctx.font         = `800 ${tituloSize}px Arial, sans-serif`;
+    ctx.fillStyle    = '#ffffff';
+    ctx.textAlign    = 'center';
     ctx.textBaseline = 'middle';
     ctx.fillText(`Cumpleañeros ${mesNombre}`, W / 2, TITULO_Y);
 
-    // ── Dividir en dos columnas
-    const mitad = Math.ceil(personas.length / 2);
-    const col1  = personas.slice(0, mitad);
-    const col2  = personas.slice(mitad);
+    // ── ZONA DE NOMBRES ──
+    // Entre 13% y 41% del alto — zona libre sobre la torta y el bonete
+    const ZONA_TOP    = H * 0.13;
+    const ZONA_BOTTOM = H * 0.41;
+    const ZONA_H      = ZONA_BOTTOM - ZONA_TOP;
+
+    // ── COLUMNAS RÍGIDAS ──
+    // Col1: desde 4% hasta 49% del ancho
+    // Col2: desde 51% hasta 96% del ancho
+    // La fecha se alinea a la derecha del espacio de cada columna
+    const C1_LEFT  = W * 0.04;
+    const C1_RIGHT = W * 0.49;
+    const C2_LEFT  = W * 0.51;
+    const C2_RIGHT = W * 0.96;
+    const COL_W    = C1_RIGHT - C1_LEFT;  // ancho de cada columna (~420px en 930px)
+
+    // Gap fijo entre nombre y fecha (en px relativos al ancho)
+    const GAP_FECHA = W * 0.022;
+
+    const mitad   = Math.ceil(personas.length / 2);
+    const col1    = personas.slice(0, mitad);
+    const col2    = personas.slice(mitad);
     const maxRows = Math.max(col1.length, col2.length);
 
-    // ── Calcular font-size dinámico para que todos entren en la zona
-    // Empezamos con un tamaño máximo y lo reducimos si es necesario
-    const MAX_FONT  = Math.round(W * 0.038);
-    const MIN_FONT  = Math.round(W * 0.018);
-    const LINE_RATIO = 1.55; // factor interlineado
+    // ── FONT-SIZE DINÁMICO ──
+    // Arranca grande y baja hasta que nombre+gap+fecha entre en COL_W
+    // y todas las filas entren en ZONA_H
+    const MAX_FONT   = Math.round(W * 0.036);
+    const MIN_FONT   = Math.round(W * 0.016);
+    const LINE_RATIO = 1.6;
 
-    // Ancho disponible por columna (cada una ocupa ~40% del ancho, centrada)
-    const COL_WIDTH = W * 0.40;
-
-    // Función para medir el texto más largo de una lista con un font-size dado
-    function maxTextWidth(lista, fs) {
+    function anchoLinea(p, fs) {
+      const diaStr = `${String(p.dia).padStart(2,'0')}/${String(mesNum).padStart(2,'0')}`;
       ctx.font = `700 ${fs}px Arial, sans-serif`;
-      let max = 0;
-      lista.forEach(p => {
-        const diaStr = `${String(p.dia).padStart(2,'0')}/${String(mesNum).padStart(2,'0')}`;
-        const w = ctx.measureText(p.nombre + '   ' + diaStr).width;
-        if (w > max) max = w;
-      });
-      return max;
+      const wN = ctx.measureText(p.nombre).width;
+      ctx.font = `400 ${fs}px Arial, sans-serif`;
+      const wF = ctx.measureText(diaStr).width;
+      return wN + GAP_FECHA + wF;
     }
 
-    // Reducir font-size hasta que todo entre en ancho y en alto
     let fs = MAX_FONT;
     while (fs > MIN_FONT) {
-      const lineH    = fs * LINE_RATIO;
-      const altoNec  = maxRows * lineH;
-      const anchoNec = Math.max(
-        maxTextWidth(col1, fs),
-        maxTextWidth(col2, fs)
-      );
-      if (altoNec <= ZONA_H && anchoNec <= COL_WIDTH) break;
+      const lineH   = fs * LINE_RATIO;
+      const altoNec = maxRows * lineH;
+      // El más ancho de todas las personas en ambas columnas
+      const maxAncho = Math.max(...personas.map(p => anchoLinea(p, fs)));
+      if (altoNec <= ZONA_H && maxAncho <= COL_W) break;
       fs -= 1;
     }
 
     const lineH  = fs * LINE_RATIO;
-    const totalH = maxRows * lineH;
+    // Alinear arriba: primera fila pegada al inicio de la zona, no centrada
+    const startY = ZONA_TOP + lineH * 0.5;
 
-    // Centrar verticalmente dentro de la zona
-    const startY = ZONA_TOP + (ZONA_H - totalH) / 2 + lineH * 0.5;
-
-    // Centros horizontales de cada columna
-    const C1 = W * 0.26;   // centro columna izquierda
-    const C2 = W * 0.74;   // centro columna derecha
-
-    // Gap entre nombre y fecha dentro de la misma línea
-    const GAP = fs * 0.9;
-
-    function dibujarColumna(lista, cx) {
+    // ── DIBUJAR COLUMNA ──
+    // Nombre alineado a la izquierda del margen de columna
+    // Fecha alineada a la derecha del margen de columna
+    function dibujarColumna(lista, colLeft, colRight) {
       lista.forEach((p, i) => {
         const y      = startY + i * lineH;
         const diaStr = `${String(p.dia).padStart(2,'0')}/${String(mesNum).padStart(2,'0')}`;
 
-        // Medir los dos textos para centrar el bloque nombre+fecha
-        ctx.font = `700 ${fs}px Arial, sans-serif`;
-        const wNombre = ctx.measureText(p.nombre).width;
-        ctx.font = `500 ${fs}px Arial, sans-serif`;
-        const wFecha  = ctx.measureText(diaStr).width;
-
-        const bloqueW  = wNombre + GAP + wFecha;
-        const startX   = cx - bloqueW / 2;
-
-        // Nombre en blanco
-        ctx.font      = `700 ${fs}px Arial, sans-serif`;
-        ctx.fillStyle = '#ffffff';
-        ctx.textAlign = 'left';
+        // Nombre: alineado a la izquierda de la columna
+        ctx.font         = `700 ${fs}px Arial, sans-serif`;
+        ctx.fillStyle    = '#ffffff';
+        ctx.textAlign    = 'left';
         ctx.textBaseline = 'middle';
-        ctx.fillText(p.nombre, startX, y);
+        ctx.fillText(p.nombre, colLeft, y);
 
-        // Fecha en blanco semitransparente
-        ctx.font      = `500 ${fs}px Arial, sans-serif`;
-        ctx.fillStyle = 'rgba(255,255,255,0.72)';
-        ctx.fillText(diaStr, startX + wNombre + GAP, y);
+        // Fecha: alineada a la derecha de la columna
+        ctx.font      = `400 ${fs}px Arial, sans-serif`;
+        ctx.fillStyle = 'rgba(255,255,255,0.75)';
+        ctx.textAlign = 'right';
+        ctx.fillText(diaStr, colRight, y);
       });
     }
 
-    dibujarColumna(col1, C1);
-    dibujarColumna(col2, C2);
+    dibujarColumna(col1, C1_LEFT, C1_RIGHT);
+    dibujarColumna(col2, C2_LEFT, C2_RIGHT);
 
-    // Descargar
+    // ── DESCARGAR ──
     const link = document.createElement('a');
     link.download = `Cumpleañeros_${mesNombre}.png`;
     link.href = canvas.toDataURL('image/png');
