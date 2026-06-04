@@ -5,13 +5,9 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Cumples del Mes</title>
 <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
-
-<!-- SheetJS para leer y generar Excel -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
-
 <style>
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-
 :root {
   --glass-bg:     rgba(15, 25, 50, 0.55);
   --glass-border: rgba(255, 255, 255, 0.10);
@@ -24,81 +20,44 @@
   --muted:        rgba(200, 215, 255, 0.50);
   --blur:         blur(18px);
 }
+body { font-family:'Outfit',sans-serif; min-height:100vh; color:var(--text); position:relative; overflow-x:hidden; padding-bottom:80px; }
 
-body {
-  font-family: 'Outfit', sans-serif;
-  min-height: 100vh;
-  color: var(--text);
-  position: relative;
-  overflow-x: hidden;
-  padding-bottom: 80px;
-}
-
-/* ══ FONDO FESTIVO ══ */
-.bg-scene {
-  position: fixed;
-  inset: 0;
-  z-index: 0;
-  background: linear-gradient(160deg, #0b1a3e 0%, #1a0a3e 40%, #0e2040 70%, #0a1628 100%);
-  overflow: hidden;
-}
-
+/* FONDO */
+.bg-scene { position:fixed; inset:0; z-index:0; background:linear-gradient(160deg,#0b1a3e 0%,#1a0a3e 40%,#0e2040 70%,#0a1628 100%); overflow:hidden; }
 .bg-scene::before {
-  content: '';
-  position: absolute;
-  inset: 0;
+  content:''; position:absolute; inset:0;
   background-image:
-    radial-gradient(ellipse 120px 160px at 8%  20%, rgba(251,191,36,.18)  0%, transparent 70%),
-    radial-gradient(ellipse 90px  130px at 18% 65%, rgba(167,139,250,.22) 0%, transparent 70%),
-    radial-gradient(ellipse 100px 140px at 30% 10%, rgba(251,113,133,.20) 0%, transparent 70%),
-    radial-gradient(ellipse 80px  120px at 45% 80%, rgba(52,211,153,.18)  0%, transparent 70%),
-    radial-gradient(ellipse 110px 150px at 60% 15%, rgba(96,165,250,.20)  0%, transparent 70%),
-    radial-gradient(ellipse 95px  135px at 72% 55%, rgba(251,191,36,.17)  0%, transparent 70%),
-    radial-gradient(ellipse 105px 145px at 85% 25%, rgba(244,114,182,.22) 0%, transparent 70%),
-    radial-gradient(ellipse 88px  125px at 92% 75%, rgba(167,139,250,.20) 0%, transparent 70%);
+    radial-gradient(ellipse 120px 160px at 8%  20%, rgba(251,191,36,.18)  0%,transparent 70%),
+    radial-gradient(ellipse 90px  130px at 18% 65%, rgba(167,139,250,.22) 0%,transparent 70%),
+    radial-gradient(ellipse 100px 140px at 30% 10%, rgba(251,113,133,.20) 0%,transparent 70%),
+    radial-gradient(ellipse 80px  120px at 45% 80%, rgba(52,211,153,.18)  0%,transparent 70%),
+    radial-gradient(ellipse 110px 150px at 60% 15%, rgba(96,165,250,.20)  0%,transparent 70%),
+    radial-gradient(ellipse 95px  135px at 72% 55%, rgba(251,191,36,.17)  0%,transparent 70%),
+    radial-gradient(ellipse 105px 145px at 85% 25%, rgba(244,114,182,.22) 0%,transparent 70%),
+    radial-gradient(ellipse 88px  125px at 92% 75%, rgba(167,139,250,.20) 0%,transparent 70%);
 }
-
 .bg-scene::after {
-  content: '';
-  position: absolute;
-  inset: 0;
+  content:''; position:absolute; inset:0;
   background-image:
-    radial-gradient(circle 3px at 12% 15%, rgba(251,191,36,.7)  0%, transparent 100%),
-    radial-gradient(circle 2px at 23% 42%, rgba(244,114,182,.8) 0%, transparent 100%),
-    radial-gradient(circle 3px at 37% 28%, rgba(167,139,250,.7) 0%, transparent 100%),
-    radial-gradient(circle 2px at 51% 67%, rgba(52,211,153,.8)  0%, transparent 100%),
-    radial-gradient(circle 4px at 63% 18%, rgba(251,191,36,.6)  0%, transparent 100%),
-    radial-gradient(circle 2px at 74% 82%, rgba(244,114,182,.7) 0%, transparent 100%),
-    radial-gradient(circle 3px at 83% 35%, rgba(96,165,250,.8)  0%, transparent 100%),
-    radial-gradient(circle 2px at 91% 58%, rgba(251,191,36,.6)  0%, transparent 100%),
-    radial-gradient(circle 3px at 16% 78%, rgba(167,139,250,.7) 0%, transparent 100%),
-    radial-gradient(circle 2px at 44% 12%, rgba(244,114,182,.8) 0%, transparent 100%),
-    radial-gradient(circle 3px at 58% 92%, rgba(52,211,153,.6)  0%, transparent 100%),
-    radial-gradient(circle 2px at 78%  5%, rgba(96,165,250,.8)  0%, transparent 100%),
-    radial-gradient(circle 4px at  6% 55%, rgba(251,113,133,.5) 0%, transparent 100%),
-    radial-gradient(circle 2px at 95% 40%, rgba(167,139,250,.7) 0%, transparent 100%),
-    radial-gradient(circle 3px at 33% 95%, rgba(251,191,36,.6)  0%, transparent 100%);
+    radial-gradient(circle 3px at 12% 15%,rgba(251,191,36,.7)  0%,transparent 100%),
+    radial-gradient(circle 2px at 23% 42%,rgba(244,114,182,.8) 0%,transparent 100%),
+    radial-gradient(circle 3px at 37% 28%,rgba(167,139,250,.7) 0%,transparent 100%),
+    radial-gradient(circle 2px at 51% 67%,rgba(52,211,153,.8)  0%,transparent 100%),
+    radial-gradient(circle 4px at 63% 18%,rgba(251,191,36,.6)  0%,transparent 100%),
+    radial-gradient(circle 2px at 74% 82%,rgba(244,114,182,.7) 0%,transparent 100%),
+    radial-gradient(circle 3px at 83% 35%,rgba(96,165,250,.8)  0%,transparent 100%),
+    radial-gradient(circle 2px at 91% 58%,rgba(251,191,36,.6)  0%,transparent 100%),
+    radial-gradient(circle 3px at 16% 78%,rgba(167,139,250,.7) 0%,transparent 100%),
+    radial-gradient(circle 2px at 44% 12%,rgba(244,114,182,.8) 0%,transparent 100%),
+    radial-gradient(circle 3px at 58% 92%,rgba(52,211,153,.6)  0%,transparent 100%),
+    radial-gradient(circle 2px at 78%  5%,rgba(96,165,250,.8)  0%,transparent 100%),
+    radial-gradient(circle 4px at  6% 55%,rgba(251,113,133,.5) 0%,transparent 100%),
+    radial-gradient(circle 2px at 95% 40%,rgba(167,139,250,.7) 0%,transparent 100%),
+    radial-gradient(circle 3px at 33% 95%,rgba(251,191,36,.6)  0%,transparent 100%);
 }
-
-.balloon {
-  position: absolute;
-  border-radius: 50%;
-  opacity: .5;
-  animation: floatUp linear infinite;
-}
-.balloon::after {
-  content: '';
-  position: absolute;
-  bottom: -18px; left: 50%;
-  transform: translateX(-50%);
-  width: 1.5px; height: 18px;
-  background: rgba(255,255,255,.25);
-}
-@keyframes floatUp {
-  0%   { transform: translateY(0)    rotate(-3deg); }
-  50%  { transform: translateY(-18px) rotate(3deg); }
-  100% { transform: translateY(0)    rotate(-3deg); }
-}
+.balloon { position:absolute; border-radius:50%; opacity:.5; animation:floatUp linear infinite; }
+.balloon::after { content:''; position:absolute; bottom:-18px; left:50%; transform:translateX(-50%); width:1.5px; height:18px; background:rgba(255,255,255,.25); }
+@keyframes floatUp { 0%{transform:translateY(0) rotate(-3deg)} 50%{transform:translateY(-18px) rotate(3deg)} 100%{transform:translateY(0) rotate(-3deg)} }
 .b1{width:55px;height:68px;background:radial-gradient(circle at 35% 30%,#fde68a,#f59e0b);left:5%;top:12%;animation-duration:5.2s}
 .b2{width:44px;height:55px;background:radial-gradient(circle at 35% 30%,#ddd6fe,#7c3aed);left:14%;top:55%;animation-duration:6.8s;animation-delay:-.8s}
 .b3{width:60px;height:74px;background:radial-gradient(circle at 35% 30%,#fbcfe8,#ec4899);left:88%;top:8%;animation-duration:4.9s;animation-delay:-1.5s}
@@ -106,300 +65,117 @@ body {
 .b5{width:38px;height:48px;background:radial-gradient(circle at 35% 30%,#bfdbfe,#3b82f6);left:78%;top:35%;animation-duration:5.6s;animation-delay:-2s}
 .b6{width:42px;height:52px;background:radial-gradient(circle at 35% 30%,#fca5a5,#ef4444);left:2%;top:75%;animation-duration:6.3s;animation-delay:-1s}
 
-/* ══ LAYOUT ══ */
-.page { position: relative; z-index: 1; }
+.page { position:relative; z-index:1; }
 
-/* ══ HEADER ══ */
-.header {
-  backdrop-filter: var(--blur);
-  -webkit-backdrop-filter: var(--blur);
-  background: rgba(10,18,40,.65);
-  border-bottom: 1px solid var(--glass-border);
-  padding: 20px 44px;
-  display: flex;
-  align-items: center;
-  gap: 14px;
-  position: sticky; top: 0; z-index: 50;
-  box-shadow: 0 4px 32px rgba(0,0,0,.3);
-}
-.logo-icon { font-size: 1.5rem; filter: drop-shadow(0 0 8px rgba(251,191,36,.5)); }
-.header-title { font-size: 1.7rem; font-weight: 700; color: #fff; letter-spacing: -.5px; }
-.header-sep { width:1px; height:26px; background: var(--glass-border); margin:0 4px; }
-.month-select {
-  background: rgba(255,255,255,.07);
-  border: 1px solid rgba(255,255,255,.12);
-  color: var(--gold);
-  font-family: 'Outfit', sans-serif;
-  font-size: 1.7rem; font-weight: 700;
-  padding: 2px 10px; border-radius: 8px;
-  cursor: pointer; outline: none;
-}
-.spacer { flex: 1; }
-.prize-group {
-  display: flex; align-items: center; gap: 10px;
-  background: rgba(255,255,255,.06);
-  border: 1px solid rgba(255,255,255,.1);
-  border-radius: 10px; padding: 10px 18px;
-}
+/* HEADER */
+.header { backdrop-filter:var(--blur); -webkit-backdrop-filter:var(--blur); background:rgba(10,18,40,.65); border-bottom:1px solid var(--glass-border); padding:20px 44px; display:flex; align-items:center; gap:14px; position:sticky; top:0; z-index:50; box-shadow:0 4px 32px rgba(0,0,0,.3); }
+.logo-icon { font-size:1.5rem; filter:drop-shadow(0 0 8px rgba(251,191,36,.5)); }
+.header-title { font-size:1.7rem; font-weight:700; color:#fff; letter-spacing:-.5px; }
+.header-sep { width:1px; height:26px; background:var(--glass-border); margin:0 4px; }
+.month-select { background:rgba(255,255,255,.07); border:1px solid rgba(255,255,255,.12); color:var(--gold); font-family:'Outfit',sans-serif; font-size:1.7rem; font-weight:700; padding:2px 10px; border-radius:8px; cursor:pointer; outline:none; }
+.spacer { flex:1; }
+.prize-group { display:flex; align-items:center; gap:10px; background:rgba(255,255,255,.06); border:1px solid rgba(255,255,255,.1); border-radius:10px; padding:10px 18px; }
 .prize-label { font-size:.7rem; font-weight:500; color:var(--muted); text-transform:uppercase; letter-spacing:.09em; }
-.prize-input {
-  background: transparent; border: none;
-  color: var(--gold); font-size: 1.1rem; font-weight: 700;
-  font-family: 'Outfit', sans-serif; width: 130px;
-  outline: none; text-align: right;
-}
+.prize-input { background:transparent; border:none; color:var(--gold); font-size:1.1rem; font-weight:700; font-family:'Outfit',sans-serif; width:130px; outline:none; text-align:right; }
 
-/* ══ MAIN ══ */
-.main { padding: 32px 44px; display: flex; flex-direction: column; gap: 26px; }
-
-.section-label {
-  font-size:.68rem; font-weight:600; text-transform:uppercase;
-  letter-spacing:.14em; color:var(--muted); margin-bottom:14px;
-  display:flex; align-items:center; gap:10px;
-}
+/* MAIN */
+.main { padding:32px 44px; display:flex; flex-direction:column; gap:26px; }
+.section-label { font-size:.68rem; font-weight:600; text-transform:uppercase; letter-spacing:.14em; color:var(--muted); margin-bottom:14px; display:flex; align-items:center; gap:10px; }
 .section-label::after { content:''; flex:1; height:1px; background:var(--glass-border); }
 
-/* ══ EMPRESA CARDS ══ */
+/* EMPRESA CARDS */
 .empresas-grid { display:grid; grid-template-columns:repeat(4,1fr); gap:14px; }
-
-.empresa-card {
-  backdrop-filter: var(--blur);
-  -webkit-backdrop-filter: var(--blur);
-  background: var(--glass-bg);
-  border: 1px solid var(--glass-border);
-  border-radius: 16px; padding: 18px;
-  display: flex; flex-direction: column; gap: 12px;
-  transition: border-color .2s;
-}
-.empresa-card.ready { border-color: rgba(52,211,153,.4); }
-
+.empresa-card { backdrop-filter:var(--blur); -webkit-backdrop-filter:var(--blur); background:var(--glass-bg); border:1px solid var(--glass-border); border-radius:16px; padding:18px; display:flex; flex-direction:column; gap:12px; transition:border-color .2s; }
+.empresa-card.ready { border-color:rgba(52,211,153,.4); }
 .empresa-name { font-size:.82rem; font-weight:600; color:#fff; text-transform:uppercase; letter-spacing:.06em; }
-.empresa-badge {
-  display:inline-block; font-size:.62rem; font-weight:600;
-  background:rgba(52,211,153,.12); color:var(--green);
-  border:1px solid rgba(52,211,153,.25); border-radius:20px;
-  padding:2px 8px; margin-top:3px;
-}
-
-.dropzone {
-  border: 1.5px dashed rgba(255,255,255,.13);
-  border-radius: 10px; padding: 12px 10px;
-  text-align: center; cursor: pointer;
-  transition: all .2s; background: rgba(255,255,255,.03);
-  position: relative;
-}
-.dropzone input[type=file] {
-  position: absolute; inset: 0; opacity: 0; cursor: pointer; width: 100%;
-}
-.dropzone:hover { border-color: rgba(96,165,250,.5); background: rgba(96,165,250,.06); }
+.empresa-badge { display:inline-block; font-size:.62rem; font-weight:600; background:rgba(52,211,153,.12); color:var(--green); border:1px solid rgba(52,211,153,.25); border-radius:20px; padding:2px 8px; margin-top:3px; }
+.dropzone { border:1.5px dashed rgba(255,255,255,.13); border-radius:10px; padding:12px 10px; text-align:center; cursor:pointer; transition:all .2s; background:rgba(255,255,255,.03); position:relative; }
+.dropzone input[type=file] { position:absolute; inset:0; opacity:0; cursor:pointer; width:100%; }
+.dropzone:hover { border-color:rgba(96,165,250,.5); background:rgba(96,165,250,.06); }
 .dropzone.filled { border-style:solid; border-color:rgba(52,211,153,.4); background:rgba(52,211,153,.05); }
-
 .dz-icon { font-size:1.1rem; margin-bottom:3px; pointer-events:none; }
 .dz-label { font-size:.65rem; font-weight:600; color:var(--muted); text-transform:uppercase; letter-spacing:.09em; margin-bottom:2px; pointer-events:none; }
 .dz-sub { font-size:.65rem; color:rgba(200,215,255,.3); pointer-events:none; }
 .dz-file { font-size:.7rem; color:var(--green); font-weight:600; pointer-events:none; }
 
-/* ══ PASO 2 ══ */
+/* PASO 2 */
 .step2-connector { display:flex; justify-content:center; margin-bottom:-1px; }
 .step2-connector-inner { display:flex; flex-direction:column; align-items:center; }
 .step2-connector-line { width:2px; height:20px; background:linear-gradient(180deg,transparent,rgba(96,165,250,.6)); }
 .step2-connector-dot { width:8px; height:8px; border-radius:50%; background:var(--accent); box-shadow:0 0 10px rgba(96,165,250,.8); }
-
-.step2-block {
-  backdrop-filter: var(--blur);
-  -webkit-backdrop-filter: var(--blur);
-  background: var(--glass-bg);
-  border: 1px solid rgba(96,165,250,.35);
-  border-radius: 18px;
-  box-shadow: 0 0 0 4px rgba(96,165,250,.06), 0 8px 40px rgba(0,0,0,.25);
-  overflow: hidden;
-}
-
-.step2-topbar {
-  background: rgba(96,165,250,.09);
-  border-bottom: 1px solid rgba(96,165,250,.15);
-  padding: 11px 26px;
-  display: flex; align-items: center; justify-content: space-between;
-}
+.step2-block { backdrop-filter:var(--blur); -webkit-backdrop-filter:var(--blur); background:var(--glass-bg); border:1px solid rgba(96,165,250,.35); border-radius:18px; box-shadow:0 0 0 4px rgba(96,165,250,.06),0 8px 40px rgba(0,0,0,.25); overflow:hidden; }
+.step2-topbar { background:rgba(96,165,250,.09); border-bottom:1px solid rgba(96,165,250,.15); padding:11px 26px; display:flex; align-items:center; justify-content:space-between; }
 .step2-tag { font-size:.68rem; font-weight:700; letter-spacing:.13em; text-transform:uppercase; color:var(--accent); }
 .step2-status { font-size:.68rem; color:var(--muted); display:flex; align-items:center; gap:6px; }
 .status-dot { width:6px; height:6px; border-radius:50%; }
 .status-dot.warn { background:var(--gold); box-shadow:0 0 6px var(--gold); }
 .status-dot.ok   { background:var(--green); box-shadow:0 0 6px var(--green); }
-
-.step2-body {
-  padding: 22px 26px;
-  display: grid; grid-template-columns: 1fr 1px 220px;
-  gap: 22px; align-items: center;
-}
-.step2-divider { background: var(--glass-border); align-self: stretch; }
-
+.step2-body { padding:22px 26px; display:grid; grid-template-columns:1fr 1px 220px; gap:22px; align-items:center; }
+.step2-divider { background:var(--glass-border); align-self:stretch; }
 .step2-dz-label { font-size:.68rem; font-weight:600; text-transform:uppercase; letter-spacing:.1em; color:var(--muted); margin-bottom:10px; }
-
-.step2-dropzone {
-  border: 1.5px dashed rgba(167,139,250,.35);
-  border-radius: 12px; padding: 20px;
-  display: flex; align-items: center; gap: 14px;
-  cursor: pointer; transition: all .2s;
-  background: rgba(167,139,250,.04);
-  position: relative;
-}
+.step2-dropzone { border:1.5px dashed rgba(167,139,250,.35); border-radius:12px; padding:20px; display:flex; align-items:center; gap:14px; cursor:pointer; transition:all .2s; background:rgba(167,139,250,.04); position:relative; }
 .step2-dropzone input[type=file] { position:absolute; inset:0; opacity:0; cursor:pointer; width:100%; }
 .step2-dropzone:hover { border-color:rgba(167,139,250,.7); background:rgba(167,139,250,.08); }
 .step2-dropzone.filled { border-color:rgba(52,211,153,.4); border-style:solid; background:rgba(52,211,153,.05); }
-
-.step2-dz-icon {
-  width:46px; height:46px; background:rgba(167,139,250,.12);
-  border-radius:12px; display:flex; align-items:center; justify-content:center;
-  font-size:1.4rem; flex-shrink:0; pointer-events:none;
-}
+.step2-dz-icon { width:46px; height:46px; background:rgba(167,139,250,.12); border-radius:12px; display:flex; align-items:center; justify-content:center; font-size:1.4rem; flex-shrink:0; pointer-events:none; }
 .step2-dz-text { pointer-events:none; }
 .step2-dz-text strong { display:block; font-size:.88rem; color:#fff; margin-bottom:3px; }
 .step2-dz-text span { font-size:.72rem; color:var(--muted); }
-
 .step2-right { display:flex; flex-direction:column; gap:10px; }
-
-.checklist {
-  background: rgba(255,255,255,.04);
-  border: 1px solid var(--glass-border);
-  border-radius: 10px; padding: 11px 14px;
-  display: flex; flex-direction: column; gap: 6px;
-}
+.checklist { background:rgba(255,255,255,.04); border:1px solid var(--glass-border); border-radius:10px; padding:11px 14px; display:flex; flex-direction:column; gap:6px; }
 .check-item { font-size:.71rem; display:flex; align-items:center; gap:7px; }
 .check-item.ok      { color:var(--green); }
 .check-item.pending { color:rgba(200,215,255,.35); }
 .cdot { width:5px; height:5px; border-radius:50%; flex-shrink:0; }
 .ok      .cdot { background:var(--green); box-shadow:0 0 4px var(--green); }
 .pending .cdot { background:rgba(255,255,255,.15); }
-
-.process-btn {
-  padding: 15px; border: none; border-radius: 11px;
-  color: #fff; font-family: 'Outfit', sans-serif;
-  font-size: .95rem; font-weight: 700; cursor: pointer;
-  letter-spacing: .02em;
-  background: linear-gradient(135deg, #3b82f6, #8b5cf6);
-  box-shadow: 0 4px 20px rgba(99,102,241,.35);
-  transition: all .2s;
-  opacity: .4; pointer-events: none;
-}
+.process-btn { padding:15px; border:none; border-radius:11px; color:#fff; font-family:'Outfit',sans-serif; font-size:.95rem; font-weight:700; cursor:pointer; letter-spacing:.02em; background:linear-gradient(135deg,#3b82f6,#8b5cf6); box-shadow:0 4px 20px rgba(99,102,241,.35); transition:all .2s; opacity:.4; pointer-events:none; }
 .process-btn.active { opacity:1; pointer-events:auto; }
 .process-btn.active:hover { transform:translateY(-1px); box-shadow:0 8px 28px rgba(99,102,241,.5); }
-
 .btn-hint { font-size:.62rem; color:rgba(200,215,255,.3); text-align:center; line-height:1.5; }
 
-/* ══ RESULTADOS ══ */
-.results-card {
-  backdrop-filter: var(--blur);
-  -webkit-backdrop-filter: var(--blur);
-  background: var(--glass-bg);
-  border: 1px solid var(--glass-border);
-  border-radius: 16px; overflow: hidden;
-  display: none;
-}
-.results-card.visible { display: block; }
-
-.results-header {
-  background: rgba(255,255,255,.04);
-  border-bottom: 1px solid var(--glass-border);
-  padding: 14px 22px;
-  display: flex; align-items: center; justify-content: space-between;
-}
+/* RESULTADOS */
+.results-card { backdrop-filter:var(--blur); -webkit-backdrop-filter:var(--blur); background:var(--glass-bg); border:1px solid var(--glass-border); border-radius:16px; overflow:hidden; display:none; }
+.results-card.visible { display:block; }
+.results-header { background:rgba(255,255,255,.04); border-bottom:1px solid var(--glass-border); padding:14px 22px; display:flex; align-items:center; justify-content:space-between; }
 .results-title { font-size:.9rem; font-weight:600; color:#fff; }
-.results-count {
-  background: rgba(96,165,250,.12); color:var(--accent);
-  border: 1px solid rgba(96,165,250,.25);
-  border-radius: 20px; font-size:.72rem; font-weight:700; padding:3px 12px;
-}
-.results-body { padding: 18px 22px; }
+.results-count { background:rgba(96,165,250,.12); color:var(--accent); border:1px solid rgba(96,165,250,.25); border-radius:20px; font-size:.72rem; font-weight:700; padding:3px 12px; }
+.results-body { padding:18px 22px; }
 .edit-hint { font-size:.7rem; color:var(--muted); margin-bottom:13px; display:flex; align-items:center; gap:6px; }
-
-.person-row {
-  display: grid; grid-template-columns: 1fr auto 60px 30px;
-  align-items: center; gap: 10px;
-  padding: 7px 10px; border-radius: 8px; margin-bottom: 3px;
-  transition: background .15s;
-}
-.person-row:hover { background: rgba(255,255,255,.04); }
-
-.person-name-input {
-  background: transparent; border: none;
-  color: var(--text); font-family: 'Outfit', sans-serif;
-  font-size: .86rem; font-weight: 500;
-  outline: none; width: 100%;
-  border-bottom: 1px solid transparent;
-  transition: border-color .2s; padding: 2px 0;
-}
-.person-name-input:focus { border-bottom-color: var(--accent); }
-
-.person-empresa {
-  font-size:.65rem; color:var(--muted);
-  background:rgba(255,255,255,.06);
-  border-radius:4px; padding:2px 7px; white-space:nowrap;
-}
+.person-row { display:grid; grid-template-columns:1fr auto 60px 30px; align-items:center; gap:10px; padding:7px 10px; border-radius:8px; margin-bottom:3px; transition:background .15s; }
+.person-row:hover { background:rgba(255,255,255,.04); }
+.person-name-input { background:transparent; border:none; color:var(--text); font-family:'Outfit',sans-serif; font-size:.86rem; font-weight:500; outline:none; width:100%; border-bottom:1px solid transparent; transition:border-color .2s; padding:2px 0; }
+.person-name-input:focus { border-bottom-color:var(--accent); }
+.person-empresa { font-size:.65rem; color:var(--muted); background:rgba(255,255,255,.06); border-radius:4px; padding:2px 7px; white-space:nowrap; }
 .person-day { font-size:.83rem; font-weight:700; color:var(--accent2); text-align:center; }
-.person-delete {
-  background:transparent; border:none;
-  color:rgba(255,255,255,.18); cursor:pointer;
-  font-size:.9rem; border-radius:4px; padding:3px 5px;
-  transition: color .15s, background .15s;
-}
+.person-delete { background:transparent; border:none; color:rgba(255,255,255,.18); cursor:pointer; font-size:.9rem; border-radius:4px; padding:3px 5px; transition:color .15s,background .15s; }
 .person-delete:hover { color:var(--red); background:rgba(248,113,113,.1); }
 
-/* ══ ALERTAS ══ */
+/* ALERTAS */
 .alerts-section { display:none; }
 .alerts-section.visible { display:block; }
-
-.alerts-card {
-  backdrop-filter: var(--blur);
-  -webkit-backdrop-filter: var(--blur);
-  background: rgba(248,113,113,.06);
-  border: 1px solid rgba(248,113,113,.2);
-  border-radius: 14px; padding: 15px 20px;
-}
+.alerts-card { backdrop-filter:var(--blur); -webkit-backdrop-filter:var(--blur); background:rgba(248,113,113,.06); border:1px solid rgba(248,113,113,.2); border-radius:14px; padding:15px 20px; }
 .alerts-title { font-size:.72rem; font-weight:700; color:#f87171; text-transform:uppercase; letter-spacing:.09em; margin-bottom:10px; }
 .alert-row { font-size:.75rem; color:rgba(248,113,113,.7); padding:4px 0; border-bottom:1px solid rgba(248,113,113,.08); display:flex; gap:10px; }
 .alert-cuil { font-weight:700; font-family:monospace; color:#f87171; }
 
-/* ══ EXPORT ══ */
+/* EXPORT */
 .export-section { display:none; justify-content:flex-end; gap:12px; }
 .export-section.visible { display:flex; }
-
-.btn-export {
-  display:flex; align-items:center; gap:8px;
-  padding: 13px 26px; border-radius:10px; border:none;
-  font-family:'Outfit',sans-serif; font-size:.9rem; font-weight:600;
-  cursor:pointer; transition:all .2s; backdrop-filter:blur(6px);
-}
+.btn-export { display:flex; align-items:center; gap:8px; padding:13px 26px; border-radius:10px; border:none; font-family:'Outfit',sans-serif; font-size:.9rem; font-weight:600; cursor:pointer; transition:all .2s; backdrop-filter:blur(6px); }
 .btn-export:hover { transform:translateY(-2px); }
-.btn-excel {
-  background:linear-gradient(135deg,rgba(5,150,105,.85),rgba(16,185,129,.85));
-  color:#fff; box-shadow:0 4px 16px rgba(16,185,129,.2);
-  border:1px solid rgba(52,211,153,.2);
-}
-.btn-image {
-  background:linear-gradient(135deg,rgba(124,58,237,.85),rgba(168,85,247,.85));
-  color:#fff; box-shadow:0 4px 16px rgba(168,85,247,.2);
-  border:1px solid rgba(167,139,250,.2);
-}
+.btn-excel { background:linear-gradient(135deg,rgba(5,150,105,.85),rgba(16,185,129,.85)); color:#fff; box-shadow:0 4px 16px rgba(16,185,129,.2); border:1px solid rgba(52,211,153,.2); }
+.btn-image { background:linear-gradient(135deg,rgba(124,58,237,.85),rgba(168,85,247,.85)); color:#fff; box-shadow:0 4px 16px rgba(168,85,247,.2); border:1px solid rgba(167,139,250,.2); }
 
-/* ══ TOAST ══ */
-.toast {
-  position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%) translateY(80px);
-  background: rgba(20,30,55,.95); border: 1px solid var(--glass-border);
-  border-radius: 10px; padding: 12px 24px;
-  font-size: .85rem; color: var(--text);
-  backdrop-filter: blur(12px);
-  transition: transform .3s ease, opacity .3s ease;
-  opacity: 0; z-index: 200; white-space: nowrap;
-}
-.toast.show { transform: translateX(-50%) translateY(0); opacity: 1; }
-.toast.error { border-color: rgba(248,113,113,.4); color: #f87171; }
-.toast.success { border-color: rgba(52,211,153,.4); color: var(--green); }
+/* TOAST */
+.toast { position:fixed; bottom:30px; left:50%; transform:translateX(-50%) translateY(80px); background:rgba(20,30,55,.95); border:1px solid var(--glass-border); border-radius:10px; padding:12px 24px; font-size:.85rem; color:var(--text); backdrop-filter:blur(12px); transition:transform .3s ease,opacity .3s ease; opacity:0; z-index:200; white-space:nowrap; }
+.toast.show { transform:translateX(-50%) translateY(0); opacity:1; }
+.toast.error   { border-color:rgba(248,113,113,.4); color:#f87171; }
+.toast.success { border-color:rgba(52,211,153,.4); color:var(--green); }
 </style>
 </head>
 <body>
 
-<!-- FONDO -->
 <div class="bg-scene">
   <div class="balloon b1"></div><div class="balloon b2"></div>
   <div class="balloon b3"></div><div class="balloon b4"></div>
@@ -408,7 +184,6 @@ body {
 
 <div class="page">
 
-<!-- HEADER -->
 <header class="header">
   <div class="logo-icon">🎂</div>
   <div class="header-title">Cumples del Mes</div>
@@ -430,15 +205,11 @@ body {
 
 <div class="main">
 
-  <!-- ① EMPRESAS -->
   <div>
     <div class="section-label">① Nóminas por empresa</div>
-    <div class="empresas-grid" id="empresasGrid">
-      <!-- generado por JS -->
-    </div>
+    <div class="empresas-grid" id="empresasGrid"></div>
   </div>
 
-  <!-- ② TEMPLATE + PROCESAR -->
   <div>
     <div class="section-label">② Template y procesamiento</div>
     <div class="step2-connector">
@@ -450,7 +221,7 @@ body {
     <div class="step2-block">
       <div class="step2-topbar">
         <span class="step2-tag">Completar y procesar</span>
-        <span class="step2-status" id="step2Status">
+        <span class="step2-status">
           <span class="status-dot warn" id="step2Dot"></span>
           <span id="step2StatusText">Cargá los archivos de todas las empresas</span>
         </span>
@@ -469,9 +240,7 @@ body {
         </div>
         <div class="step2-divider"></div>
         <div class="step2-right">
-          <div class="checklist" id="checklist">
-            <!-- generado por JS -->
-          </div>
+          <div class="checklist" id="checklist"></div>
           <button class="process-btn" id="processBtn" onclick="procesarDatos()">⚡ Procesar datos</button>
           <div class="btn-hint" id="processHint">Se habilita cuando todo esté cargado</div>
         </div>
@@ -479,7 +248,6 @@ body {
     </div>
   </div>
 
-  <!-- ③ RESULTADOS -->
   <div id="resultsSection">
     <div class="section-label">③ Resultados — edición</div>
     <div class="results-card" id="resultsCard">
@@ -494,7 +262,6 @@ body {
     </div>
   </div>
 
-  <!-- ALERTAS -->
   <div class="alerts-section" id="alertsSection">
     <div class="alerts-card">
       <div class="alerts-title">⚠ Registros sin coincidencia</div>
@@ -502,53 +269,42 @@ body {
     </div>
   </div>
 
-  <!-- EXPORTAR -->
   <div class="export-section" id="exportSection">
     <button class="btn-export btn-excel" onclick="generarExcel()">📥 Generar Excel</button>
     <button class="btn-export btn-image" onclick="generarImagen()">🖼 Generar Imagen</button>
   </div>
 
-</div><!-- /main -->
-</div><!-- /page -->
+</div>
+</div>
 
-<!-- CANVAS oculto para generar imagen -->
 <canvas id="outputCanvas" style="display:none"></canvas>
-
-<!-- TOAST -->
 <div class="toast" id="toast"></div>
 
 <script>
-// ══════════════════════════════════════════════
-// ESTADO GLOBAL
-// ══════════════════════════════════════════════
 const EMPRESAS = [
-  { id: 'caramuto',  nombre: 'Caramuto Rosario'   },
-  { id: 'sacifi',    nombre: 'Previnca SACIFI y A' },
-  { id: 'salud',     nombre: 'Previnca Salud'      },
-  { id: 'seguros',   nombre: 'Previnca Seguros'    },
+  { id:'caramuto', nombre:'Caramuto Rosario'   },
+  { id:'sacifi',   nombre:'Previnca SACIFI y A' },
+  { id:'salud',    nombre:'Previnca Salud'      },
+  { id:'seguros',  nombre:'Previnca Seguros'    },
 ];
 
 const state = {
   archivos: {
-    caramuto:  { arca: null, tango: null },
-    sacifi:    { arca: null, tango: null },
-    salud:     { arca: null, tango: null },
-    seguros:   { arca: null, tango: null },
+    caramuto: { arca:null, tango:null },
+    sacifi:   { arca:null, tango:null },
+    salud:    { arca:null, tango:null },
+    seguros:  { arca:null, tango:null },
   },
   template: null,
-  cumpleaneros: [],   // { nombre, dia, mes, empresa, banco, cc, cuil }
+  cumpleaneros: [],
   alertas: [],
 };
 
-// ══════════════════════════════════════════════
-// INIT — construir grilla de empresas y checklist
-// ══════════════════════════════════════════════
+// ── INIT ──
 function init() {
   const grid = document.getElementById('empresasGrid');
   const checklist = document.getElementById('checklist');
-
   EMPRESAS.forEach(emp => {
-    // Card empresa
     grid.innerHTML += `
       <div class="empresa-card" id="card-${emp.id}">
         <div>
@@ -570,479 +326,394 @@ function init() {
           <div class="dz-sub" id="sub-${emp.id}-tango">Arrastrá o hacé clic</div>
         </div>
       </div>`;
-
-    // Checklist
     checklist.innerHTML += `
       <div class="check-item pending" id="check-${emp.id}">
         <span class="cdot"></span>${emp.nombre}
       </div>`;
   });
-
-  // Checklist template
   checklist.innerHTML += `
     <div class="check-item pending" id="check-template">
       <span class="cdot"></span>Template de imagen
     </div>`;
 }
 
-// ══════════════════════════════════════════════
-// HELPERS
-// ══════════════════════════════════════════════
-function triggerFile(id) {
-  document.getElementById(id).click();
-}
+// ── HELPERS ──
+function triggerFile(id) { document.getElementById(id).click(); }
 
-function showToast(msg, type = '') {
+function showToast(msg, type='') {
   const t = document.getElementById('toast');
   t.textContent = msg;
   t.className = 'toast show ' + type;
   setTimeout(() => { t.className = 'toast'; }, 3000);
 }
 
-function normalizarCuil(raw) {
-  return String(raw).replace(/[-\s]/g, '').trim();
-}
+function normalizarCuil(raw) { return String(raw).replace(/[-\s]/g,'').trim(); }
+function getMonthNumber()    { return parseInt(document.getElementById('monthSelect').value); }
+function getMonthName()      { const o=document.getElementById('monthSelect'); return o.options[o.selectedIndex].text; }
 
-function getMonthNumber() {
-  return parseInt(document.getElementById('monthSelect').value);
-}
-
-function getMonthName() {
-  const opts = document.getElementById('monthSelect').options;
-  return opts[document.getElementById('monthSelect').selectedIndex].text;
-}
-
-// ══════════════════════════════════════════════
-// CARGA ARCHIVOS — ARCA (txt tabulado)
-// ══════════════════════════════════════════════
+// ── PARSEAR ARCA ──
 function parsearArca(texto) {
   const cuils = new Set();
-  const lineas = texto.split('\n');
-  lineas.forEach(linea => {
-    const partes = linea.trim().split(/\s+/);
-    const posible = partes[0];
-    if (/^\d{11}$/.test(posible)) {
-      cuils.add(posible);
-    }
+  texto.split('\n').forEach(linea => {
+    const p = linea.trim().split(/\s+/)[0];
+    if (/^\d{11}$/.test(p)) cuils.add(p);
   });
   return cuils;
 }
 
-// ══════════════════════════════════════════════
-// CARGA ARCHIVOS — TANGO (xlsx)
-// ══════════════════════════════════════════════
+// ── PARSEAR TANGO ──
 function parsearTango(wb) {
   const empleados = [];
-  const sheetName = wb.SheetNames[0];
-  const ws = wb.Sheets[sheetName];
-  const rows = XLSX.utils.sheet_to_json(ws, { defval: '' });
-
+  const ws = wb.Sheets[wb.SheetNames[0]];
+  const rows = XLSX.utils.sheet_to_json(ws, { defval:'' });
   rows.forEach(row => {
-    // Buscar columnas por nombre flexible
-    const cuil   = normalizarCuil(row['CUIL'] || row['cuil'] || '');
-    const nombre = String(row['NOMBRE'] || row['Nombre'] || row['APELLIDO Y NOMBRE'] || '').trim();
-    const fechaRaw = row['FECHA'] || row['Fecha'] || row['FECHA DE NACIMIENTO'] || row['fecha'] || '';
-    const cc     = String(row['CENTRO COSTO'] || row['Centro Costo'] || row['CC'] || '').trim();
-    const banco  = String(row['BANCO'] || row['Banco'] || '').trim();
-
-    if (!cuil || !nombre || !fechaRaw) return;
-
-    // Parsear fecha: acepta DD/MM/YYYY, MM/DD/YYYY, números seriales Excel
-    let dia = null, mes = null;
-    if (typeof fechaRaw === 'number') {
-      // Serial Excel
+    const cuil     = normalizarCuil(row['CUIL']||row['cuil']||'');
+    const nombre   = String(row['NOMBRE']||row['Nombre']||row['APELLIDO Y NOMBRE']||'').trim();
+    const fechaRaw = row['FECHA']||row['Fecha']||row['FECHA DE NACIMIENTO']||row['fecha']||'';
+    const cc       = String(row['CENTRO COSTO']||row['Centro Costo']||row['CC']||'').trim();
+    const banco    = String(row['BANCO']||row['Banco']||'').trim();
+    if (!cuil||!nombre||!fechaRaw) return;
+    let dia=null, mes=null;
+    if (typeof fechaRaw==='number') {
       const d = XLSX.SSF.parse_date_code(fechaRaw);
-      dia = d.d; mes = d.m;
+      dia=d.d; mes=d.m;
     } else {
-      const partes = String(fechaRaw).split('/');
-      if (partes.length === 3) {
-        dia = parseInt(partes[0]);
-        mes = parseInt(partes[1]);
-      }
+      const p = String(fechaRaw).split('/');
+      if (p.length===3) { dia=parseInt(p[0]); mes=parseInt(p[1]); }
     }
-
-    if (!dia || !mes) return;
+    if (!dia||!mes) return;
     empleados.push({ cuil, nombre, dia, mes, cc, banco });
   });
-
   return empleados;
 }
 
-// ══════════════════════════════════════════════
-// HANDLER — nomina ARCA o TANGO
-// ══════════════════════════════════════════════
+// ── HANDLERS ──
 function handleNomina(event, empId, tipo) {
   const file = event.target.files[0];
   if (!file) return;
-
   const reader = new FileReader();
-
-  if (tipo === 'arca') {
+  if (tipo==='arca') {
     reader.onload = e => {
       const cuils = parsearArca(e.target.result);
-      if (cuils.size === 0) {
-        showToast('No se encontraron CUILs en el archivo ARCA', 'error');
-        return;
-      }
+      if (!cuils.size) { showToast('No se encontraron CUILs en ARCA','error'); return; }
       state.archivos[empId].arca = cuils;
-      markDZ(`dz-${empId}-arca`, `sub-${empId}-arca`, file.name);
+      markDZ(`dz-${empId}-arca`,`sub-${empId}-arca`,file.name);
       actualizarEstado();
-      showToast(`✓ ARCA cargado: ${cuils.size} CUILs activos`, 'success');
+      showToast(`✓ ARCA: ${cuils.size} CUILs activos`,'success');
     };
-    reader.readAsText(file, 'utf-8');
+    reader.readAsText(file,'utf-8');
   } else {
     reader.onload = e => {
-      const wb = XLSX.read(e.target.result, { type: 'array' });
-      const empleados = parsearTango(wb);
-      if (empleados.length === 0) {
-        showToast('No se pudieron leer datos del archivo TANGO', 'error');
-        return;
-      }
-      state.archivos[empId].tango = empleados;
-      markDZ(`dz-${empId}-tango`, `sub-${empId}-tango`, file.name);
+      const wb = XLSX.read(e.target.result,{type:'array'});
+      const emp = parsearTango(wb);
+      if (!emp.length) { showToast('No se pudieron leer datos de TANGO','error'); return; }
+      state.archivos[empId].tango = emp;
+      markDZ(`dz-${empId}-tango`,`sub-${empId}-tango`,file.name);
       actualizarEstado();
-      showToast(`✓ TANGO cargado: ${empleados.length} empleados`, 'success');
+      showToast(`✓ TANGO: ${emp.length} empleados`,'success');
     };
     reader.readAsArrayBuffer(file);
   }
 }
 
-// ══════════════════════════════════════════════
-// HANDLER — template imagen
-// ══════════════════════════════════════════════
 function handleTemplate(event) {
   const file = event.target.files[0];
   if (!file) return;
   const reader = new FileReader();
   reader.onload = e => {
-    state.template = e.target.result; // base64 dataURL
-    // UI
+    state.template = e.target.result;
     document.getElementById('templateDZ').classList.add('filled');
     document.getElementById('templateIcon').textContent = '✅';
     document.getElementById('templateLabel').textContent = file.name;
     document.getElementById('templateSub').textContent = 'Template cargado';
-    setCheckItem('check-template', true);
+    setCheckItem('check-template',true);
     actualizarEstado();
-    showToast('✓ Template cargado', 'success');
+    showToast('✓ Template cargado','success');
   };
   reader.readAsDataURL(file);
 }
 
-// ══════════════════════════════════════════════
-// UI helpers
-// ══════════════════════════════════════════════
 function markDZ(dzId, subId, filename) {
   document.getElementById(dzId).classList.add('filled');
   const sub = document.getElementById(subId);
   sub.className = 'dz-file';
-  sub.textContent = filename.length > 22 ? filename.substring(0,20)+'…' : filename;
+  sub.textContent = filename.length>22 ? filename.substring(0,20)+'…' : filename;
 }
 
 function setCheckItem(id, ok) {
-  const el = document.getElementById(id);
-  el.className = 'check-item ' + (ok ? 'ok' : 'pending');
+  document.getElementById(id).className = 'check-item '+(ok?'ok':'pending');
 }
 
-// ══════════════════════════════════════════════
-// ACTUALIZAR ESTADO GENERAL
-// ══════════════════════════════════════════════
+// ── ACTUALIZAR ESTADO ──
 function actualizarEstado() {
   let faltantes = [];
-
   EMPRESAS.forEach(emp => {
-    const arcaOk  = !!state.archivos[emp.id].arca;
-    const tangoOk = !!state.archivos[emp.id].tango;
-    const listaOk = arcaOk && tangoOk;
-
-    setCheckItem(`check-${emp.id}`, listaOk);
-    document.getElementById(`badge-${emp.id}`).style.display = listaOk ? 'inline-block' : 'none';
+    const ok = !!state.archivos[emp.id].arca && !!state.archivos[emp.id].tango;
+    setCheckItem(`check-${emp.id}`, ok);
+    document.getElementById(`badge-${emp.id}`).style.display = ok?'inline-block':'none';
     const card = document.getElementById(`card-${emp.id}`);
-    if (listaOk) card.classList.add('ready'); else card.classList.remove('ready');
-
-    if (!listaOk) faltantes.push(emp.nombre.split(' ')[0]);
+    ok ? card.classList.add('ready') : card.classList.remove('ready');
+    if (!ok) faltantes.push(emp.nombre.split(' ')[0]);
   });
-
-  const templateOk = !!state.template;
-  const todo = faltantes.length === 0 && templateOk;
-
-  const btn  = document.getElementById('processBtn');
-  const dot  = document.getElementById('step2Dot');
-  const txt  = document.getElementById('step2StatusText');
-  const hint = document.getElementById('processHint');
-
+  const tplOk = !!state.template;
+  const todo  = !faltantes.length && tplOk;
+  const btn   = document.getElementById('processBtn');
+  const dot   = document.getElementById('step2Dot');
+  const txt   = document.getElementById('step2StatusText');
+  const hint  = document.getElementById('processHint');
   if (todo) {
     btn.classList.add('active');
-    dot.className = 'status-dot ok';
-    txt.textContent = 'Todo listo — podés procesar';
-    hint.textContent = '';
+    dot.className='status-dot ok';
+    txt.textContent='Todo listo — podés procesar';
+    hint.textContent='';
   } else {
     btn.classList.remove('active');
-    dot.className = 'status-dot warn';
-    const partes = [];
-    if (faltantes.length) partes.push('Faltan: ' + faltantes.join(', '));
-    if (!templateOk) partes.push('template');
-    txt.textContent = partes.join(' · ');
-    hint.textContent = 'Se habilita cuando todo esté cargado';
+    dot.className='status-dot warn';
+    const partes=[];
+    if (faltantes.length) partes.push('Faltan: '+faltantes.join(', '));
+    if (!tplOk) partes.push('template');
+    txt.textContent=partes.join(' · ');
+    hint.textContent='Se habilita cuando todo esté cargado';
   }
 }
 
-// ══════════════════════════════════════════════
-// PROCESAR DATOS
-// ══════════════════════════════════════════════
+// ── PROCESAR ──
 function procesarDatos() {
   const mesActual = getMonthNumber();
   const mesNombre = getMonthName();
-  const cumples = [];
-  const alertas = [];
-
+  const cumples=[], alertas=[];
   EMPRESAS.forEach(emp => {
     const cuils = state.archivos[emp.id].arca;
     const tango = state.archivos[emp.id].tango;
-
     tango.forEach(t => {
-      if (!cuils.has(t.cuil)) {
-        // CUIL en TANGO pero no en ARCA (no activo)
-        return;
-      }
-      if (t.mes === mesActual) {
-        cumples.push({
-          nombre:  t.nombre,
-          dia:     t.dia,
-          mes:     t.mes,
-          empresa: emp.nombre,
-          empresaId: emp.id,
-          banco:   t.banco,
-          cc:      t.cc,
-          cuil:    t.cuil,
-        });
+      if (!cuils.has(t.cuil)) return;
+      if (t.mes===mesActual) {
+        cumples.push({ nombre:t.nombre, dia:t.dia, mes:t.mes,
+          empresa:emp.nombre, empresaId:emp.id, banco:t.banco, cc:t.cc, cuil:t.cuil });
       }
     });
-
-    // Alertas: CUIL en ARCA sin registro en TANGO
     cuils.forEach(cuil => {
-      const encontrado = tango.find(t => t.cuil === cuil);
-      if (!encontrado) {
-        alertas.push({ cuil, empresa: emp.nombre, tipo: 'CUIL activo en ARCA sin datos en TANGO' });
-      }
+      if (!tango.find(t=>t.cuil===cuil))
+        alertas.push({ cuil, empresa:emp.nombre, tipo:'CUIL activo en ARCA sin datos en TANGO' });
     });
   });
-
-  // Ordenar por día
-  cumples.sort((a, b) => a.dia - b.dia);
-
+  cumples.sort((a,b)=>a.dia-b.dia);
   state.cumpleaneros = cumples;
   state.alertas = alertas;
-
   renderResultados(mesNombre);
   renderAlertas();
-
   document.getElementById('resultsCard').classList.add('visible');
-  document.getElementById('alertsSection').classList.toggle('visible', alertas.length > 0);
-  document.getElementById('exportSection').classList.toggle('visible', cumples.length > 0);
-
-  showToast(`✓ Proceso completado: ${cumples.length} cumpleañeros encontrados`, 'success');
-  document.getElementById('resultsCard').scrollIntoView({ behavior: 'smooth', block: 'start' });
+  document.getElementById('alertsSection').classList.toggle('visible', alertas.length>0);
+  document.getElementById('exportSection').classList.toggle('visible', cumples.length>0);
+  showToast(`✓ ${cumples.length} cumpleañeros encontrados`,'success');
+  document.getElementById('resultsCard').scrollIntoView({behavior:'smooth',block:'start'});
 }
 
-// ══════════════════════════════════════════════
-// RENDER RESULTADOS
-// ══════════════════════════════════════════════
+// ── RENDER RESULTADOS ──
 function renderResultados(mesNombre) {
   const list  = document.getElementById('personList');
-  const title = document.getElementById('resultsTitle');
-  const count = document.getElementById('resultsCount');
   const mes   = getMonthNumber();
-
-  title.textContent = `Cumpleañeros de ${mesNombre}`;
-  count.textContent = `${state.cumpleaneros.length} persona${state.cumpleaneros.length !== 1 ? 's' : ''}`;
-
-  list.innerHTML = '';
-  state.cumpleaneros.forEach((p, i) => {
+  document.getElementById('resultsTitle').textContent = `Cumpleañeros de ${mesNombre}`;
+  document.getElementById('resultsCount').textContent = `${state.cumpleaneros.length} persona${state.cumpleaneros.length!==1?'s':''}`;
+  list.innerHTML='';
+  state.cumpleaneros.forEach((p,i) => {
     const fila = document.createElement('div');
-    fila.className = 'person-row';
-    fila.dataset.index = i;
-    fila.innerHTML = `
+    fila.className='person-row';
+    fila.innerHTML=`
       <input class="person-name-input" value="${escHtml(p.nombre)}"
-        onchange="state.cumpleaneros[${i}].nombre = this.value" />
+        onchange="state.cumpleaneros[${i}].nombre=this.value" />
       <span class="person-empresa">${escHtml(nombreCorto(p.empresa))}</span>
       <span class="person-day">${String(p.dia).padStart(2,'0')}/${String(mes).padStart(2,'0')}</span>
-      <button class="person-delete" onclick="eliminarPersona(${i})" title="Eliminar">✕</button>
-    `;
+      <button class="person-delete" onclick="eliminarPersona(${i})" title="Eliminar">✕</button>`;
     list.appendChild(fila);
   });
 }
 
 function eliminarPersona(i) {
-  state.cumpleaneros.splice(i, 1);
+  state.cumpleaneros.splice(i,1);
   renderResultados(getMonthName());
-  if (state.cumpleaneros.length === 0) {
-    document.getElementById('exportSection').classList.remove('visible');
-  }
+  if (!state.cumpleaneros.length) document.getElementById('exportSection').classList.remove('visible');
 }
 
 function renderAlertas() {
   const list = document.getElementById('alertsList');
-  list.innerHTML = '';
-  state.alertas.slice(0, 20).forEach(a => {
-    list.innerHTML += `
-      <div class="alert-row">
-        <span class="alert-cuil">${escHtml(a.cuil)}</span>
-        <span>${escHtml(a.tipo)} (${escHtml(a.empresa)})</span>
-      </div>`;
+  list.innerHTML='';
+  state.alertas.slice(0,20).forEach(a => {
+    list.innerHTML+=`<div class="alert-row"><span class="alert-cuil">${escHtml(a.cuil)}</span><span>${escHtml(a.tipo)} (${escHtml(a.empresa)})</span></div>`;
   });
-  if (state.alertas.length > 20) {
-    list.innerHTML += `<div class="alert-row" style="color:var(--muted)">… y ${state.alertas.length - 20} más</div>`;
-  }
+  if (state.alertas.length>20)
+    list.innerHTML+=`<div class="alert-row" style="color:var(--muted)">… y ${state.alertas.length-20} más</div>`;
 }
 
 function nombreCorto(s) {
-  const m = { 'Caramuto Rosario':'Caramuto','Previnca SACIFI y A':'Previnca SA','Previnca Salud':'P.Salud','Previnca Seguros':'P.Seguros' };
-  return m[s] || s;
+  const m={'Caramuto Rosario':'Caramuto','Previnca SACIFI y A':'Previnca SA','Previnca Salud':'P.Salud','Previnca Seguros':'P.Seguros'};
+  return m[s]||s;
 }
 
 function escHtml(s) {
   return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
 }
 
-// ══════════════════════════════════════════════
-// GENERAR EXCEL
-// ══════════════════════════════════════════════
+// ── GENERAR EXCEL ──
 function generarExcel() {
   const wb = XLSX.utils.book_new();
-  const premio = document.getElementById('prizeInput').value.replace(/[^\d.,]/g,'').trim() || '0';
+  const premio = document.getElementById('prizeInput').value.replace(/[^\d.,]/g,'').trim()||'0';
   const mesNum = getMonthNumber();
-
   EMPRESAS.forEach(emp => {
-    const personas = state.cumpleaneros.filter(p => p.empresaId === emp.id);
-    if (personas.length === 0) {
-      // Hoja vacía con mensaje
-      const ws = XLSX.utils.aoa_to_sheet([['Sin cumpleañeros este mes']]);
-      XLSX.utils.book_append_sheet(wb, ws, emp.nombre.substring(0,31));
+    const personas = state.cumpleaneros.filter(p=>p.empresaId===emp.id);
+    if (!personas.length) {
+      XLSX.utils.book_append_sheet(wb, XLSX.utils.aoa_to_sheet([['Sin cumpleañeros este mes']]), emp.nombre.substring(0,31));
       return;
     }
-
-    // Ordenar: por banco, luego por centro de costo
-    const ordenadas = [...personas].sort((a, b) => {
-      if (a.banco < b.banco) return -1;
-      if (a.banco > b.banco) return 1;
-      if (a.cc < b.cc) return -1;
-      if (a.cc > b.cc) return 1;
-      return a.dia - b.dia;
+    const ordenadas = [...personas].sort((a,b)=>{
+      if (a.banco<b.banco) return -1; if (a.banco>b.banco) return 1;
+      if (a.cc<b.cc) return -1;      if (a.cc>b.cc) return 1;
+      return a.dia-b.dia;
     });
-
-    const header = ['CUIL', 'APELLIDO Y NOMBRE', 'BANCO', 'CENTRO COSTO', 'DÍA CUMPLEAÑOS', 'IMPORTE'];
-    const rows = ordenadas.map(p => [
-      p.cuil,
-      p.nombre,
-      p.banco,
-      p.cc,
+    const header=['CUIL','APELLIDO Y NOMBRE','BANCO','CENTRO COSTO','DÍA CUMPLEAÑOS','IMPORTE'];
+    const rows=ordenadas.map(p=>[
+      p.cuil, p.nombre, p.banco, p.cc,
       `${String(p.dia).padStart(2,'0')}/${String(mesNum).padStart(2,'0')}`,
-      premio,
+      premio
     ]);
-
-    const wsData = [header, ...rows];
-    const ws = XLSX.utils.aoa_to_sheet(wsData);
-
-    // Ancho de columnas
-    ws['!cols'] = [
-      {wch:15},{wch:35},{wch:22},{wch:14},{wch:16},{wch:12}
-    ];
-
+    const ws=XLSX.utils.aoa_to_sheet([header,...rows]);
+    ws['!cols']=[{wch:15},{wch:35},{wch:22},{wch:14},{wch:16},{wch:12}];
     XLSX.utils.book_append_sheet(wb, ws, emp.nombre.substring(0,31));
   });
-
-  const mesNombre = getMonthName();
-  XLSX.writeFile(wb, `Cumpleañeros_${mesNombre}.xlsx`);
-  showToast('✓ Excel generado y descargado', 'success');
+  XLSX.writeFile(wb,`Cumpleañeros_${getMonthName()}.xlsx`);
+  showToast('✓ Excel generado y descargado','success');
 }
 
-// ══════════════════════════════════════════════
-// GENERAR IMAGEN
-// ══════════════════════════════════════════════
+// ── GENERAR IMAGEN ──
 function generarImagen() {
-  if (!state.template) { showToast('No hay template cargado', 'error'); return; }
-  if (state.cumpleaneros.length === 0) { showToast('No hay cumpleañeros para mostrar', 'error'); return; }
+  if (!state.template)             { showToast('No hay template cargado','error'); return; }
+  if (!state.cumpleaneros.length)  { showToast('No hay cumpleañeros para mostrar','error'); return; }
 
   const img = new Image();
   img.onload = () => {
-    const canvas  = document.getElementById('outputCanvas');
-    const ctx     = canvas.getContext('2d');
+    const canvas = document.getElementById('outputCanvas');
+    const ctx    = canvas.getContext('2d');
     canvas.width  = img.naturalWidth;
     canvas.height = img.naturalHeight;
-
-    // Dibujar imagen base
     ctx.drawImage(img, 0, 0);
 
     const W = canvas.width;
     const H = canvas.height;
-    const mesNum = getMonthNumber();
+    const mesNum    = getMonthNumber();
     const mesNombre = getMonthName();
+    const personas  = state.cumpleaneros;
 
-    // ── ZONA DE NOMBRES ──
-    // Basado en la imagen de referencia: zona superior ~35% del alto
-    // Título: "Cumpleañeros JUNIO" centrado en ~8% del alto
-    // Nombres: desde ~13% hasta ~40% del alto, dos columnas
+    // ── Zona de nombres: entre 12% y 42% del alto de la imagen
+    const ZONA_TOP    = H * 0.12;
+    const ZONA_BOTTOM = H * 0.42;
+    const ZONA_H      = ZONA_BOTTOM - ZONA_TOP;
 
-    const ESCALA = W / 900; // factor de escala relativo a 900px de ancho
+    // ── Título "Cumpleañeros MES" en el centro horizontal, arriba de la zona
+    const TITULO_Y = H * 0.065;
 
-    // Título
-    ctx.fillStyle = '#ffffff';
-    ctx.textAlign = 'center';
+    // Calcular font-size del título escalado al ancho
+    const tituloSize = Math.round(W * 0.058);
+    ctx.font        = `800 ${tituloSize}px Arial, sans-serif`;
+    ctx.fillStyle   = '#ffffff';
+    ctx.textAlign   = 'center';
     ctx.textBaseline = 'middle';
-    const titleFontSize = Math.round(52 * ESCALA);
-    ctx.font = `700 ${titleFontSize}px 'Outfit', sans-serif`;
-    ctx.fillText(`Cumpleañeros ${mesNombre}`, W / 2, H * 0.075);
+    ctx.fillText(`Cumpleañeros ${mesNombre}`, W / 2, TITULO_Y);
 
-    // Personas — dividir en dos columnas iguales
-    const personas = state.cumpleaneros;
+    // ── Dividir en dos columnas
     const mitad = Math.ceil(personas.length / 2);
     const col1  = personas.slice(0, mitad);
     const col2  = personas.slice(mitad);
+    const maxRows = Math.max(col1.length, col2.length);
 
-    const nameFontSize = Math.round(34 * ESCALA);
-    const lineH = Math.round(52 * ESCALA);
-    const startY = H * 0.135;
+    // ── Calcular font-size dinámico para que todos entren en la zona
+    // Empezamos con un tamaño máximo y lo reducimos si es necesario
+    const MAX_FONT  = Math.round(W * 0.038);
+    const MIN_FONT  = Math.round(W * 0.018);
+    const LINE_RATIO = 1.55; // factor interlineado
 
-    const col1X = W * 0.25;
-    const col2X = W * 0.72;
-    const dateOffsetX = Math.round(115 * ESCALA);
+    // Ancho disponible por columna (cada una ocupa ~40% del ancho, centrada)
+    const COL_WIDTH = W * 0.40;
 
-    function dibujarColumna(lista, baseX) {
+    // Función para medir el texto más largo de una lista con un font-size dado
+    function maxTextWidth(lista, fs) {
+      ctx.font = `700 ${fs}px Arial, sans-serif`;
+      let max = 0;
+      lista.forEach(p => {
+        const diaStr = `${String(p.dia).padStart(2,'0')}/${String(mesNum).padStart(2,'0')}`;
+        const w = ctx.measureText(p.nombre + '   ' + diaStr).width;
+        if (w > max) max = w;
+      });
+      return max;
+    }
+
+    // Reducir font-size hasta que todo entre en ancho y en alto
+    let fs = MAX_FONT;
+    while (fs > MIN_FONT) {
+      const lineH    = fs * LINE_RATIO;
+      const altoNec  = maxRows * lineH;
+      const anchoNec = Math.max(
+        maxTextWidth(col1, fs),
+        maxTextWidth(col2, fs)
+      );
+      if (altoNec <= ZONA_H && anchoNec <= COL_WIDTH) break;
+      fs -= 1;
+    }
+
+    const lineH  = fs * LINE_RATIO;
+    const totalH = maxRows * lineH;
+
+    // Centrar verticalmente dentro de la zona
+    const startY = ZONA_TOP + (ZONA_H - totalH) / 2 + lineH * 0.5;
+
+    // Centros horizontales de cada columna
+    const C1 = W * 0.26;   // centro columna izquierda
+    const C2 = W * 0.74;   // centro columna derecha
+
+    // Gap entre nombre y fecha dentro de la misma línea
+    const GAP = fs * 0.9;
+
+    function dibujarColumna(lista, cx) {
       lista.forEach((p, i) => {
-        const y = startY + i * lineH;
+        const y      = startY + i * lineH;
         const diaStr = `${String(p.dia).padStart(2,'0')}/${String(mesNum).padStart(2,'0')}`;
 
-        // Nombre
-        ctx.font = `700 ${nameFontSize}px 'Outfit', sans-serif`;
-        ctx.fillStyle = '#ffffff';
-        ctx.textAlign = 'right';
-        ctx.fillText(p.nombre, baseX, y);
+        // Medir los dos textos para centrar el bloque nombre+fecha
+        ctx.font = `700 ${fs}px Arial, sans-serif`;
+        const wNombre = ctx.measureText(p.nombre).width;
+        ctx.font = `500 ${fs}px Arial, sans-serif`;
+        const wFecha  = ctx.measureText(diaStr).width;
 
-        // Fecha (más tenue, alineada a izquierda del nombre)
-        ctx.font = `500 ${nameFontSize}px 'Outfit', sans-serif`;
-        ctx.fillStyle = 'rgba(255,255,255,0.75)';
+        const bloqueW  = wNombre + GAP + wFecha;
+        const startX   = cx - bloqueW / 2;
+
+        // Nombre en blanco
+        ctx.font      = `700 ${fs}px Arial, sans-serif`;
+        ctx.fillStyle = '#ffffff';
         ctx.textAlign = 'left';
-        ctx.fillText(diaStr, baseX + Math.round(18 * ESCALA), y);
+        ctx.textBaseline = 'middle';
+        ctx.fillText(p.nombre, startX, y);
+
+        // Fecha en blanco semitransparente
+        ctx.font      = `500 ${fs}px Arial, sans-serif`;
+        ctx.fillStyle = 'rgba(255,255,255,0.72)';
+        ctx.fillText(diaStr, startX + wNombre + GAP, y);
       });
     }
 
-    dibujarColumna(col1, col1X);
-    dibujarColumna(col2, col2X);
+    dibujarColumna(col1, C1);
+    dibujarColumna(col2, C2);
 
-    // Descargar PNG
+    // Descargar
     const link = document.createElement('a');
     link.download = `Cumpleañeros_${mesNombre}.png`;
     link.href = canvas.toDataURL('image/png');
     link.click();
-    showToast('✓ Imagen generada y descargada', 'success');
+    showToast('✓ Imagen generada y descargada','success');
   };
 
   img.src = state.template;
 }
 
-// ══════════════════════════════════════════════
-// ARRANCAR
-// ══════════════════════════════════════════════
 init();
 </script>
 </body>
