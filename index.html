@@ -397,11 +397,21 @@ function getMonthNumber()    { return parseInt(document.getElementById('monthSel
 function getMonthName()      { const o=document.getElementById('monthSelect'); return o.options[o.selectedIndex].text; }
 
 // ── PARSEAR ARCA ──
-function parsearArca(texto) {
+// Para Salud: detecta automáticamente si la línea empieza con "01" y toma el CUIL
+// de la posición siguiente. Para las demás empresas toma siempre el primer elemento.
+function parsearArca(texto, esSalud) {
   const cuils = new Set();
   texto.split('\n').forEach(linea => {
-    const p = linea.trim().split(/\s+/)[0];
-    if (/^\d{11}$/.test(p)) cuils.add(p);
+    const partes = linea.trim().split(/\s+/);
+    let candidato;
+    if (esSalud) {
+      // Formato nuevo: "01  CUIL ..."  → toma partes[1]
+      // Formato viejo: "CUIL ..."      → toma partes[0]
+      candidato = partes[0] === '01' ? partes[1] : partes[0];
+    } else {
+      candidato = partes[0];
+    }
+    if (candidato && /^\d{11}$/.test(candidato)) cuils.add(candidato);
   });
   return cuils;
 }
@@ -433,12 +443,13 @@ function parsearTango(wb) {
 }
 
 
-// ── HANDLERS (aceptan File directamente, compatibles con clic y drag&drop) ──
+// ── HANDLERS ──
 function procesarArchivoNomina(file, empId, tipo) {
   const reader = new FileReader();
   if (tipo === 'arca') {
     reader.onload = e => {
-      const cuils = parsearArca(e.target.result);
+      const esSalud = empId === 'salud';
+      const cuils = parsearArca(e.target.result, esSalud);
       if (!cuils.size) { showToast('No se encontraron CUILs en ARCA', 'error'); return; }
       state.archivos[empId].arca = cuils;
       markDZ('dz-' + empId + '-arca', 'sub-' + empId + '-arca', file.name);
@@ -475,7 +486,6 @@ function procesarArchivoTemplate(file) {
   reader.readAsDataURL(file);
 }
 
-// Mantener compatibilidad con onchange del input (por si acaso)
 function handleNomina(event, empId, tipo) {
   const file = event.target.files[0];
   if (file) procesarArchivoNomina(file, empId, tipo);
@@ -665,22 +675,14 @@ function generarImagen() {
     ctx.textBaseline = 'middle';
     ctx.fillText(`Cumpleañeros ${mesNombre}`, W / 2, TITULO_Y);
 
-    // ── ZONA DE NOMBRES ──
-    // Entre 13% y 41% del alto — zona libre sobre la torta y el bonete
     const ZONA_TOP    = H * 0.13;
     const ZONA_BOTTOM = H * 0.41;
     const ZONA_H      = ZONA_BOTTOM - ZONA_TOP;
 
-    // ── COLUMNAS RÍGIDAS ──
-    // Col1: desde 4% hasta 49% del ancho
-    // Col2: desde 51% hasta 96% del ancho
-    // La fecha se alinea a la derecha del espacio de cada columna
-    // Centro de cada columna
     const C1_CENTER = W * 0.265;
     const C2_CENTER = W * 0.735;
-    const COL_W     = W * 0.45;   // ancho max por columna para el calculo de fit
+    const COL_W     = W * 0.45;
 
-    // Gap entre nombre y fecha
     const GAP_FECHA = W * 0.022;
 
     const mitad   = Math.ceil(personas.length / 2);
@@ -688,7 +690,6 @@ function generarImagen() {
     const col2    = personas.slice(mitad);
     const maxRows = Math.max(col1.length, col2.length);
 
-    // Font-size dinamico: baja hasta que el bloque mas ancho entre en COL_W
     const MAX_FONT   = Math.round(W * 0.025);
     const MIN_FONT   = Math.round(W * 0.014);
     const LINE_RATIO = 1.6;
@@ -712,32 +713,27 @@ function generarImagen() {
     }
 
     const lineH  = fs * LINE_RATIO;
-    // Alinear arriba: primera fila pegada al inicio de la zona
     const startY = ZONA_TOP + lineH * 0.5;
 
-    // Dibujar columna: bloque nombre+fecha centrado en el centro de la columna
     function dibujarColumna(lista, cx) {
       lista.forEach(function(p, i) {
         const y      = startY + i * lineH;
         const diaStr = String(p.dia).padStart(2,'0') + '/' + String(mesNum).padStart(2,'0');
 
-        // Medir ambos textos para calcular ancho total del bloque
         ctx.font = '700 ' + fs + 'px Arial, sans-serif';
         const wN = ctx.measureText(p.nombre).width;
         ctx.font = '400 ' + fs + 'px Arial, sans-serif';
         const wF = ctx.measureText(diaStr).width;
 
         const bloqueW = wN + GAP_FECHA + wF;
-        const startX  = cx - bloqueW / 2;   // arrancar para que el bloque quede centrado
+        const startX  = cx - bloqueW / 2;
 
-        // Nombre
         ctx.font         = '700 ' + fs + 'px Arial, sans-serif';
         ctx.fillStyle    = '#ffffff';
         ctx.textAlign    = 'left';
         ctx.textBaseline = 'middle';
         ctx.fillText(p.nombre, startX, y);
 
-        // Fecha
         ctx.font      = '400 ' + fs + 'px Arial, sans-serif';
         ctx.fillStyle = 'rgba(255,255,255,0.75)';
         ctx.fillText(diaStr, startX + wN + GAP_FECHA, y);
@@ -747,7 +743,6 @@ function generarImagen() {
     dibujarColumna(col1, C1_CENTER);
     dibujarColumna(col2, C2_CENTER);
 
-    // ── DESCARGAR ──
     const link = document.createElement('a');
     link.download = `Cumpleañeros_${mesNombre}.png`;
     link.href = canvas.toDataURL('image/png');
